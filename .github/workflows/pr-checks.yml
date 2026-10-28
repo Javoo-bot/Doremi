@@ -24,6 +24,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
+      - run: npm run typecheck
       - run: npm run test:unit
 
   audio-quality:
@@ -31,26 +32,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get install -y ffmpeg
-      - name: SNR, clipping, sample rate, silence ratio on fixtures
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Sample rate, length, clipping and silence of the test takes
         run: bash scripts/audio-quality.sh tests/fixtures/takes
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ env.EVIDENCE }}-audio
+          path: reports/audio-quality.txt
+          retention-days: 7
 
   llm-evals:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
-      - run: npm ci
-      - name: Transcription WER and coaching quality (promptfoo)
+      - id: ready
         env:
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          # Forks never receive secrets, and the eval suite arrives in phase 4.
+          if [ -z "$OPENROUTER_API_KEY" ]; then echo "::notice::No OpenRouter secret on this run, evals skipped"; echo "run=false" >> "$GITHUB_OUTPUT"
+          elif [ ! -f tests/evals/promptfooconfig.yaml ]; then echo "::notice::No eval suite yet, evals skipped"; echo "run=false" >> "$GITHUB_OUTPUT"
+          else echo "run=true" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/setup-node@v4
+        if: steps.ready.outputs.run == 'true'
+        with: { node-version: 22, cache: npm }
+      - if: steps.ready.outputs.run == 'true'
+        run: npm ci
+      - name: Transcription and coaching quality (promptfoo)
+        if: steps.ready.outputs.run == 'true'
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
           LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
-        run: npx promptfoo eval -c tests/evals/promptfooconfig.yaml -o reports/evals.json
+          LANGFUSE_HOST: ${{ vars.LANGFUSE_HOST }}
+          LANGFUSE_TRACING_ENVIRONMENT: ci
+        run: npx promptfoo@latest eval -c tests/evals/promptfooconfig.yaml -o reports/evals.json
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.ready.outputs.run == 'true'
         with:
           name: ${{ env.EVIDENCE }}-evals
           path: reports/evals.json
@@ -64,7 +84,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
-      - name: Every song has a reference part, every fixture scores as before
+      - name: Every song has a valid reference
         run: npm run test:songs
       - uses: actions/upload-artifact@v4
         if: always()
@@ -74,7 +94,8 @@ jobs:
           retention-days: 7
 
   ux-validator:
-    if: github.event_name == 'pull_request'
+    # Turned on in phase 5, when the practice page exists: set repo variable UX_VALIDATOR_ENABLED=true.
+    if: github.event_name == 'pull_request' && vars.UX_VALIDATOR_ENABLED == 'true'
     needs: [unit]
     runs-on: ubuntu-latest
     steps:
