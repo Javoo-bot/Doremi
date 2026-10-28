@@ -1,0 +1,34 @@
+intent: Build the practice page, the screen you use after singing, with Playwright tests that prove it
+why: Issue #10, phase 5 of docs/DEVELOPMENT.md. Phases 1 to 4 give reference notes, pitch, per-bar scores and Catalan tips; the singer needs to see them and hear A/B
+issue: 10
+inputs:
+  score_pdf: none
+  take: none
+  part: bass
+  reference_source: score
+scope:
+  paths:
+    - ".agent/plans/10-practice-page.yaml"
+    - "src/pitch/*"
+    - "src/web/*"
+    - "src/web/public/*"
+    - "scripts/serve.ts"
+    - "tests/e2e/*"
+    - "tests/unit/pitch-yin.test.ts"
+    - "tests/unit/web-*.test.ts"
+    - "playwright.config.ts"
+    - "package.json"
+    - "package-lock.json"
+    - "docs/DEVELOPMENT.md"
+steps:
+  - src/pitch/yin.ts - small pure-TypeScript pitch tracker (ffmpeg decode plus YIN) with the same output as pitch/track.py; the server uses python CREPE when PITCH_PYTHON works, else this
+  - src/web/analysis.ts - from a Reference, a pitch track and the bar scores, build what the page draws - take curve folded to the score's octave, reference line, bars, off-pitch stretches (over 50 cents), tips with the bars they name
+  - src/web/server.ts and scripts/serve.ts - plain node http server, no new runtime deps - serves the page, POST /api/analyze (audio in, analysis out), tips from the model when a key exists, else the deterministic Catalan fallback
+  - src/web/public - index.html, app.js, style.css - canvas graph, bar numbers, click to seek, A (take audio) and B (score notes with WebAudio), tips linked to bars, upload and in-browser record
+  - tests/e2e and playwright.config.ts - upload a generated take, click the graph, play A and B, no console errors, screenshot of the graph
+  - tests/unit - YIN on the generated take, analysis output, server route
+success_criteria:
+  - "Exit check - Playwright uploads a take, clicks the graph, plays A and B, and sees no console errors"
+  - "npm run typecheck, test:unit, test:songs pass"
+risk: medium
+rollback: Revert the PR. Nothing else depends on src/web or src/pitch yet
