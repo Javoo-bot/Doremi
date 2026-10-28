@@ -64,6 +64,8 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ steps.app.outputs.token }}
+          # Agent Chain labels the next phase as the App; only that bot may start a run, never '*'.
+          allowed_bots: ${{ vars.AGENT_APP_SLUG }}
           prompt: ${{ steps.prompt.outputs.text }}
           claude_args: |
             --model claude-sonnet-5-5
