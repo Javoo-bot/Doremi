@@ -36,17 +36,18 @@ function redact(s) {
     .replace(/((?:token|key|secret|password|authorization)[=:\s]+(?:bearer\s+)?)\S+/gi, '$1[REDACTED]');
 }
 
-// Reads only the `forbidden:` list from agent-policy.yml, so policy and hook cannot drift.
-function forbiddenGlobs() {
+// Reads top-level lists from agent-policy.yml, so policy and hook cannot drift.
+function policyList(key) {
   const yml = readFileSync(join(root, '.github', 'agent-policy.yml'), 'utf8');
-  const section = yml.split(/^forbidden:\s*$/m)[1]?.split(/^\S/m)[0] ?? '';
+  const section = yml.split(new RegExp(`^${key}:\\s*$`, 'm'))[1]?.split(/^\S/m)[0] ?? '';
   return [...section.matchAll(/^\s*-\s*"?([^"\n]+)"?\s*$/gm)].map((m) => m[1]);
 }
+const forbiddenGlobs = () => policyList('forbidden');
 
 const globToRegex = (g) => new RegExp('^' + g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$');
 
 function allowedMcpServers() {
-  return Object.keys(JSON.parse(readFileSync(join(root, '.mcp.json'), 'utf8')).mcpServers);
+  return [...Object.keys(JSON.parse(readFileSync(join(root, '.mcp.json'), 'utf8')).mcpServers), ...policyList('research_mcp')];
 }
 
 const DANGEROUS_BASH = [
