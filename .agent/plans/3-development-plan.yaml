@@ -1,0 +1,20 @@
+intent: Write the development plan (phases, exit checks, open decisions) to docs/DEVELOPMENT.md
+why: Owner asked for the next development steps stored as a document so the build order is clear to people and agents
+issue: 0
+inputs:
+  score_pdf: none
+  take: none
+  part: bass
+  reference_source: score
+scope:
+  paths:
+    - "docs/*"
+    - "README.md"
+steps:
+  - Write docs/DEVELOPMENT.md with phases 0 to 7, each with output and exit check
+  - Link it from README.md
+success_criteria:
+  - Every phase names what it delivers and the check that proves it
+  - No choir recordings, scores or note data in the repo
+risk: low
+rollback: Revert the PR
