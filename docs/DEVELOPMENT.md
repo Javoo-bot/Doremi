@@ -96,6 +96,8 @@ Turn the numbers into two or three concrete tips.
 
 **Exit check:** on 10 synthetic takes with known mistakes, every tip names the right bar, and none mentions a bar that was sung well.
 
+Built in issue #9. `npm run coach:bars -- <reference.json> <pitch.json>` scores the take and prints the tips. Only the flagged bars reach the model (cents, early or late, too short, missed, syllables). A tip that names a bar sung well makes the code ask once more, then fall back to tips written from the numbers, so the exit check holds even when the model slips. With no flagged bar there is no model call. The 10 takes are in `tests/helpers/synth-take.ts`; `npm run build:evals` writes them to `tests/evals/cases.json`, and `llm-evals` runs them through promptfoo with the real model. Dynamics (piano, forte) are not measured yet, so the tips do not mention them.
+
 ### Phase 5. The practice page
 
 The screen you use after singing.

@@ -12,6 +12,8 @@
     "score": "tsx scripts/score-to-reference.ts",
     "reference:audio": "tsx scripts/reference-audio.ts",
     "align": "tsx scripts/score-take.ts",
+    "coach:bars": "tsx scripts/coach-bars.ts",
+    "build:evals": "tsx scripts/build-evals.ts",
     "test:songs": "node scripts/check-songs.mjs"
   },
   "dependencies": {
