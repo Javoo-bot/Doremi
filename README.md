@@ -18,8 +18,8 @@ Agents do the work. I manage them from a GitHub Project board.
 - A hook blocks dangerous actions before they run, and logs every tool call.
 - Secrets never touch this repo. It's public and gitleaks checks every commit.
 
-The full picture is in [docs/architecture.html](docs/architecture.html) and [docs/SDLC.md](docs/SDLC.md).
+The full picture is in [docs/architecture.html](docs/architecture.html) and [docs/SDLC.md](docs/SDLC.md). What gets built next, and in what order, is in [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 ## Status
 
-The process and guardrails are in place. The app itself comes next, built through that process.
+The process and guardrails are in place, and the first coaching pipeline, traced in Langfuse, is in review. Next is reading the bass line from the choir's scores and tracking pitch. See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
