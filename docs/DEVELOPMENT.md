@@ -63,6 +63,16 @@ Measure the sung pitch about 100 times a second.
 
 **Exit check:** on synthetic test audio generated from the score (known notes, known pitch), the median error is under 10 cents. The test audio is made by the code, so no choir recording enters the repo.
 
+### Strike songs (11 November), between phases 2 and 3
+
+The general strike repertoire is *A la Vaga*, *Abril 74* and a three-voice *Gallo rojo, gallo negro*. These use three voices, Veu Aguda, Veu Principal and Veu Greu, and the basses sing **Veu Greu**. Issue #15 carries the `priority` label, so the agent chain takes it right after phase 2.
+
+- Recognise Aguda / Principal / Greu staff labels, and pick Greu for the bass part.
+- Turn a voice's practice track into a reference (pitch tracker, then notes rounded to semitones). Needed for *Abril 74* and *Gallo rojo*, which have lyrics sheets but no score. *A la Vaga* has its MuseScore file.
+- The real strike files are processed on the owner's laptop. Tests use generated audio.
+
+**Exit check:** a track generated from a three-voice fixture's Greu line comes back as a reference matching at least 95% of the notes.
+
 ### Phase 3. Alignment and scoring
 
 Line up your take with the score, then measure each note.
@@ -105,7 +115,8 @@ The screen you use after singing.
 
 ### Phase 7. All the songs
 
-- No MuseScore sources exist beyond *Què volen* and *La Barraqueta*, so Audiveris (open-source score reading) reads every other PDF to MusicXML. Scans (L'Internacional, Soldado) need a check by eye.
+- No score reading from PDFs (owner decision, 2026-10-28). A song's reference comes from its MuseScore file when one exists, otherwise from the bass voice's practice track, converted to notes (see "Strike songs").
+- Online scores are other people's arrangements, so their low part isn't the choir's bass line. Use them only to cross-check a melody.
 - Songs with no score (Rosa de paper, Ya Tale3in): convert the bass practice track to notes as a last resort, marked as lower confidence.
 - Each new song adds its fixture to the `song-regression` check, so adding songs can't break old ones.
 
