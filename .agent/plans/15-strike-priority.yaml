@@ -1,0 +1,22 @@
+intent: Let the strike songs (11 November) jump the queue, and remove blockers in escalation and in the plan
+why: Owner wants the strike repertoire first, says no score reading from PDFs, and the escalation step uses the App on a personal-account board, which Apps cannot write
+issue: 0
+inputs:
+  score_pdf: none
+  take: none
+  part: greu
+  reference_source: owner-supplied
+scope:
+  paths:
+    - ".github/workflows/agent-chain.yml"
+    - ".github/workflows/escalate.yml"
+    - "docs/*"
+steps:
+  - agent-chain picks open phase issues labelled priority before the others
+  - escalate.yml stops adding to the Project (board auto-add covers it)
+  - docs/DEVELOPMENT.md - no PDF score reading; references come from MuseScore files or the voice's practice track; strike phase added
+success_criteria:
+  - With a priority issue open, the chain query returns it before lower-numbered phases
+  - escalate.yml has no project step
+risk: high
+rollback: Revert the PR
