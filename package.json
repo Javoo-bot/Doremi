@@ -14,7 +14,9 @@
     "align": "tsx scripts/score-take.ts",
     "coach:bars": "tsx scripts/coach-bars.ts",
     "build:evals": "tsx scripts/build-evals.ts",
-    "test:songs": "node scripts/check-songs.mjs"
+    "test:songs": "node scripts/check-songs.mjs",
+    "serve": "tsx scripts/serve.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@langfuse/openai": "6.0.2",
@@ -28,6 +30,7 @@
     "yaml": "2.9.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@types/node": "26.6.5",
     "tsx": "4.23.15",
     "typescript": "7.0.2",

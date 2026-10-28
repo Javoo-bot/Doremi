@@ -109,6 +109,8 @@ The screen you use after singing.
 
 **Exit check:** the Playwright validator uploads a take, clicks the graph, plays A and B, and sees no console errors. These are the `ux-validator` and evidence screenshots from SDLC.md.
 
+Built in PR for issue #10. `npm run serve` starts the page (`src/web`); `npm run test:e2e` runs the check. Pitch comes from `PITCH_PYTHON` (CREPE) when set, else the built-in YIN tracker in `src/pitch/yin.ts`. Tips come from the model when `OPENROUTER_API_KEY` is set, else from the numbers. The page defaults to the SATB fixture reference. The owner must set repo variable `UX_VALIDATOR_ENABLED=true` for the CI check; it also needs a preview deploy at `PREVIEW_URL_PREFIX`, which is phase 6.
+
 ### Phase 6. Deploy
 
 - Page and API on Cloudflare Workers. Sessions, scores and the weekly cost counter go in a Durable Object.
