@@ -1,0 +1,51 @@
+{
+  "title": "Fixture SATB",
+  "part": "bass",
+  "notes": [
+    {
+      "midi": 48,
+      "startBeat": 0,
+      "startSec": 0,
+      "lengthBeats": 1,
+      "lengthSec": 0.5,
+      "bar": 1,
+      "lyric": "Gal"
+    },
+    {
+      "midi": 50,
+      "startBeat": 1,
+      "startSec": 0.5,
+      "lengthBeats": 1,
+      "lengthSec": 0.5,
+      "bar": 1,
+      "lyric": "lo"
+    },
+    {
+      "midi": 52,
+      "startBeat": 2,
+      "startSec": 1,
+      "lengthBeats": 4,
+      "lengthSec": 2,
+      "bar": 1,
+      "lyric": "ro"
+    },
+    {
+      "midi": 55,
+      "startBeat": 6,
+      "startSec": 3,
+      "lengthBeats": 1,
+      "lengthSec": 0.5,
+      "bar": 2,
+      "lyric": "jo"
+    },
+    {
+      "midi": 48,
+      "startBeat": 8,
+      "startSec": 4,
+      "lengthBeats": 4,
+      "lengthSec": 4,
+      "bar": 3,
+      "lyric": "gro"
+    }
+  ]
+}
