@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doremi · Pràctica</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <h1>Doremi</h1>
+    <p id="song">Puja o grava el teu cant per veure on has desafinat.</p>
+  </header>
+  <section class="take">
+    <label class="button">Puja un enregistrament
+      <input id="upload" type="file" accept="audio/*,video/*" hidden>
+    </label>
+    <button id="record" type="button">Grava</button>
+    <span id="status" role="status" aria-live="polite"></span>
+  </section>
+  <main id="result" hidden>
+    <section class="graph">
+      <canvas id="graph" width="1000" height="360" role="img" aria-label="Gràfic del to: tu i la partitura"></canvas>
+      <p class="legend"><span class="you">Tu</span> <span class="score">Partitura</span> <span class="off">Fora de to</span> · Clica el gràfic per escoltar des d'aquell punt</p>
+      <div class="play">
+        <button id="play-a" type="button">A · Escolta la teva gravació</button>
+        <button id="play-b" type="button">B · Escolta la partitura</button>
+        <button id="stop" type="button">Atura</button>
+        <span id="cursor" aria-live="polite"></span>
+      </div>
+      <audio id="take-audio" preload="auto"></audio>
+    </section>
+    <aside class="tips">
+      <h2>Consells</h2>
+      <ul id="tips"></ul>
+    </aside>
+  </main>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
