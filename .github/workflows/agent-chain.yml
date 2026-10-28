@@ -23,8 +23,10 @@ jobs:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           REPO: ${{ github.repository }}
         run: |
+          # Issues labelled priority go first (the strike songs), then the lowest number. Never human ones.
           next=$(gh issue list -R "$REPO" --label phase --state open --json number,labels \
-            --jq '[.[] | select(([.labels[].name] | index("human")) | not)] | sort_by(.number) | .[0].number // empty')
+            --jq '[.[] | {number, l: [.labels[].name]} | select(.l | index("human") | not)]
+                  | sort_by((if (.l | index("priority")) then 0 else 1 end), .number) | .[0].number // empty')
           if [ -z "$next" ]; then echo "No open agent phase left"; exit 0; fi
           gh issue edit "$next" -R "$REPO" --add-label agent:ready
           echo "Handed issue #$next to the agent"
