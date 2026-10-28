@@ -32,7 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      # The runner's Microsoft apt mirror sometimes answers 403 and breaks apt-get update; Doremi doesn't use it.
+      - run: sudo find /etc/apt/sources.list.d -name '*microsoft*' -delete && sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Sample rate, length, clipping and silence of the test takes
         run: bash scripts/audio-quality.sh tests/fixtures/takes
       - uses: actions/upload-artifact@v4
