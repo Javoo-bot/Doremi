@@ -1,6 +1,0 @@
-ok   amazing-grace.wav: 16000 Hz, 12.086000 s, peak -2.475920 dB, rms -20.917676 dB
-ok   satb-bass.wav: 16000 Hz, 8.600000 s, peak -8.167249 dB, rms -14.639266 dB
-ok   satb-bass.mp3: 16000 Hz, 8.676000 s, peak -8.613238 dB, rms -15.085227 dB
-ok   satb-bass.m4a: 16000 Hz, 8.600000 s, peak -8.011131 dB, rms -14.663306 dB
-ok   satb-bass.ogg: 16000 Hz, 8.600000 s, peak -8.075104 dB, rms -14.638700 dB
-5 take(s) checked
