@@ -1,0 +1,35 @@
+intent: Add the first traced coaching pipeline (transcribe a take, compare to the reference lyrics, write coaching) with Langfuse tracing
+why: Owner asked for Langfuse tracing following Langfuse best practices. Latency, cost and error criteria in docs/SDLC.md are measured in Langfuse, so tracing comes before features
+issue: 0
+inputs:
+  score_pdf: none
+  take: tests/fixtures/takes/amazing-grace.wav   # synthetic speech, safe to publish
+  part: melody
+  reference_source: owner-supplied
+scope:
+  paths:
+    - "package.json"
+    - "package-lock.json"
+    - "tsconfig.json"
+    - "src/*"
+    - "scripts/coach.ts"
+    - "config/llm.yaml"
+    - "songs/*"
+    - "tests/*"
+    - ".env.example"
+    - "docs/*"
+steps:
+  - Node project with @langfuse/tracing, @langfuse/otel, @langfuse/openai 6.0.2 and the OpenAI SDK pointed at OpenRouter
+  - instrumentation.ts registers LangfuseSpanProcessor before anything else loads
+  - One trace per take named coach-take, with session per song per day, user, tags, environment
+  - Generations transcribe-lyrics (audio input as media) and write-coaching via observeOpenAI, with OpenRouter usage accounting for cost
+  - Span compare-to-reference for the pure lyric comparison
+  - Fallback OpenRouter key on 401, 402 or 429, recorded in metadata
+  - Run end to end, fetch the trace, audit against langfuse.com/docs/observability/best-practices, fix gaps
+success_criteria:
+  - A coach-take trace appears in Langfuse with three nested observations of the right types
+  - Both generations carry model, token usage and cost
+  - Trace input is the song and part, trace output is the coaching, not raw function arguments
+  - No API key appears in any trace
+risk: high
+rollback: Revert the PR. Nothing deploys; the pipeline runs locally only
