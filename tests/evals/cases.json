@@ -1,0 +1,172 @@
+[
+  {
+    "description": "flat in bar 4",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":4,\"score\":78.2,\"problems\":[{\"syllable\":\"ma\",\"cents\":-30},{\"syllable\":\"ti\",\"cents\":-29},{\"syllable\":\"nat\",\"cents\":-30}]}]",
+      "flagged": [
+        4
+      ],
+      "good": [
+        1,
+        2,
+        3,
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "description": "sharp in bar 2",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":2,\"score\":66.1,\"problems\":[{\"syllable\":\"ga\",\"cents\":40},{\"syllable\":\"llo\",\"cents\":42},{\"syllable\":\"ne\",\"cents\":41}]}]",
+      "flagged": [
+        2
+      ],
+      "good": [
+        1,
+        3,
+        4,
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "description": "very flat in bar 1",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":1,\"score\":56.2,\"problems\":[{\"syllable\":\"Can\",\"cents\":-50},{\"syllable\":\"ta\",\"cents\":-48},{\"syllable\":\"el\",\"cents\":-50}]}]",
+      "flagged": [
+        1
+      ],
+      "good": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "description": "sharp in bar 6",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":6,\"score\":72.6,\"problems\":[{\"syllable\":\"ro\",\"cents\":35},{\"syllable\":\"ig\",\"cents\":34},{\"syllable\":\"ge\",\"cents\":35}]}]",
+      "flagged": [
+        6
+      ],
+      "good": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "description": "flat in bars 2 and 5",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":2,\"score\":72.8,\"problems\":[{\"syllable\":\"ga\",\"cents\":-35},{\"syllable\":\"llo\",\"cents\":-33},{\"syllable\":\"ne\",\"cents\":-34}]},{\"bar\":5,\"score\":72.2,\"problems\":[{\"syllable\":\"a\",\"cents\":-35},{\"syllable\":\"dal\",\"cents\":-35},{\"syllable\":\"la\",\"cents\":-34}]}]",
+      "flagged": [
+        2,
+        5
+      ],
+      "good": [
+        1,
+        3,
+        4,
+        6
+      ]
+    }
+  },
+  {
+    "description": "flat in bar 3, sharp in bar 6",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":3,\"score\":67.1,\"problems\":[{\"syllable\":\"gre\",\"cents\":-40},{\"syllable\":\"a\",\"cents\":-39},{\"syllable\":\"la\",\"cents\":-40}]},{\"bar\":6,\"score\":67,\"problems\":[{\"syllable\":\"ro\",\"cents\":40},{\"syllable\":\"ig\",\"cents\":39},{\"syllable\":\"ge\",\"cents\":40}]}]",
+      "flagged": [
+        3,
+        6
+      ],
+      "good": [
+        1,
+        2,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "description": "note held too short in bar 4",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":4,\"score\":80,\"problems\":[{\"syllable\":\"ti\",\"tooShort\":true}]}]",
+      "flagged": [
+        4
+      ],
+      "good": [
+        1,
+        2,
+        3,
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "description": "note not sung in bar 5",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":5,\"score\":66.7,\"problems\":[{\"syllable\":\"dal\",\"missed\":true}]}]",
+      "flagged": [
+        5
+      ],
+      "good": [
+        1,
+        2,
+        3,
+        4,
+        6
+      ]
+    }
+  },
+  {
+    "description": "flat in bar 1, note not sung in bar 3",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":1,\"score\":78.4,\"problems\":[{\"syllable\":\"Can\",\"cents\":-30},{\"syllable\":\"ta\",\"cents\":-28},{\"syllable\":\"el\",\"cents\":-30}]},{\"bar\":3,\"score\":66.7,\"problems\":[{\"syllable\":\"a\",\"missed\":true}]}]",
+      "flagged": [
+        1,
+        3
+      ],
+      "good": [
+        2,
+        4,
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "description": "flat in bars 2, 4 and 6",
+    "vars": {
+      "system": "Ets un professor de cant coral que ajuda un baix després de gravar una veu. Escrius en català.\nRebràs només els compassos on el cantant ha fallat, amb les dades mesurades: desviació en cents (negatiu = baix, positiu = alt; 100 cents és un semitò), si ha entrat d'hora o tard, si ha tallat la nota, si no l'ha cantada, i la síl·laba de cada nota.\nRegles:\n- Escriu dos o tres consells curts i concrets, un per línia, sense numerar.\n- Cada consell parla d'un o més compassos de la llista i els anomena així: \"compàs 4\" o \"compassos 4 i 7\". No facis servir intervals com \"4-6\".\n- No esmentis cap compàs que no sigui a la llista.\n- Fes servir el vocabulari del cor: to, semitò, mig to, compàs.\n- No inventis notes, lletra ni dades. No parlis de dinàmica (piano, forte): no s'ha mesurat.\n- Si dones la síl·laba, que sigui una de les dades.",
+      "user": "Cançó: Cançó de prova\nCompassos amb errors:\n[{\"bar\":2,\"score\":78.4,\"problems\":[{\"syllable\":\"ga\",\"cents\":-30},{\"syllable\":\"llo\",\"cents\":-28},{\"syllable\":\"ne\",\"cents\":-29}]},{\"bar\":4,\"score\":78.2,\"problems\":[{\"syllable\":\"ma\",\"cents\":-30},{\"syllable\":\"ti\",\"cents\":-29},{\"syllable\":\"nat\",\"cents\":-30}]},{\"bar\":6,\"score\":77.4,\"problems\":[{\"syllable\":\"ro\",\"cents\":-30},{\"syllable\":\"ig\",\"cents\":-31},{\"syllable\":\"ge\",\"cents\":-30}]}]",
+      "flagged": [
+        2,
+        4,
+        6
+      ],
+      "good": [
+        1,
+        3,
+        5
+      ]
+    }
+  }
+]

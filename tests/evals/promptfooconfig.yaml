@@ -1,0 +1,14 @@
+# Runs in the llm-evals check, with the real model. The cases come from `npm run build:evals`
+# (10 generated takes with known mistakes); a unit test fails if cases.json is stale.
+description: Coaching tips in Catalan name the bars sung badly and no others
+providers:
+  - id: openrouter:google/gemini-3.5-flash-lite
+    config:
+      temperature: 0.3
+prompts:
+  - file://chat.json
+tests: file://cases.json
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://check-tips.cjs
