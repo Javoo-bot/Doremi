@@ -56,7 +56,7 @@ const DANGEROUS_BASH = [
   [/\bgh\s+pr\s+merge\b/, 'merging is done by the governance workflow'],
   [/\bgit\b.*--no-verify/, 'skipping the gitleaks pre-commit hook'],
   [/\bgh\s+repo\s+edit\b.*--visibility/, 'repo visibility is the owner’s call'],
-  [/\bgit\s+add\b.*(\.env|\.dev\.vars|\.pem\b|\.key\b)/, 'staging a secrets file'],
+  [/\bgit\s+add\b.*(\.env(?!\.example\b)|\.dev\.vars|\.pem\b|\.key\b)/, 'staging a secrets file'],
   [/\brm\s+-[a-z]*r[a-z]*f|\brm\s+-[a-z]*f[a-z]*r/, 'recursive delete'],
 ];
 

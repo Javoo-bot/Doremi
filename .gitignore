@@ -18,3 +18,4 @@ __pycache__/
 
 # Third-party skills: kept locally, not redistributed (several have no license that allows it).
 .claude/skills/
+!.env.example
