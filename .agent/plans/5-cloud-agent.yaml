@@ -1,0 +1,25 @@
+intent: Run the coding agent in GitHub Actions, one phase issue at a time, chained on merge
+why: Owner wants phases 1 to 5 of docs/DEVELOPMENT.md built automatically in the cloud and followed on the Project board
+issue: 0
+inputs:
+  score_pdf: none
+  take: none
+  part: none
+  reference_source: none
+scope:
+  paths:
+    - ".github/workflows/agent.yml"
+    - ".github/workflows/agent-chain.yml"
+    - ".github/agent-prompt.md"
+    - "docs/*"
+steps:
+  - agent.yml runs anthropics/claude-code-action@v1 when an issue gets the agent:ready label from the owner or doremi-agent
+  - The agent follows the repo process - agent/<issue> branch, plan commit first, PR with "Closes #N"
+  - The guard hook in .claude/settings.json applies in the cloud run too
+  - agent-chain.yml labels the next phase issue when a phase issue closes
+  - A failed run comments on the issue and labels it escalation
+success_criteria:
+  - Workflows parse and only trigger on the agent:ready label from the owner or the App
+  - The App token is used for pushes, so PR checks and chaining fire
+risk: high
+rollback: Revert the PR; remove agent:ready labels

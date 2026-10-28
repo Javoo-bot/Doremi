@@ -31,6 +31,12 @@ flowchart LR
 
 The LLM only writes the coaching words. Pitch, timing and the score come from deterministic code, so the graph is never a guess.
 
+## Who builds it
+
+Phases 1 to 5 are built by the coding agent in GitHub Actions, one issue per phase, labelled `phase`. Adding the `agent:ready` label starts Claude Code (`.github/workflows/agent.yml`) with the instructions in `.github/agent-prompt.md`. It opens a PR through the normal gates, and the PR closes the issue when it merges. `agent-chain.yml` then labels the next phase. Progress shows on the Project board. Phase 6 is labelled `human` and is never picked up by the agent.
+
+The agent pushes as the `doremi-code-agent` GitHub App. The App has no workflow permission, so it can't edit `.github/workflows/`.
+
 ## Phases
 
 ### Phase 0. Unblock the pipeline
