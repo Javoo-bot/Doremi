@@ -1,0 +1,27 @@
+intent: Align a pitch track with the reference notes by dynamic time warping and score each note and each bar
+why: Issue #8, phase 3 of docs/DEVELOPMENT.md. Phase 4 turns these per-bar numbers into coaching
+issue: 8
+inputs:
+  score_pdf: none
+  take: none
+  part: bass
+  reference_source: score
+scope:
+  paths:
+    - ".agent/plans/8-alignment-scoring.yaml"
+    - "src/align/*"
+    - "scripts/score-take.ts"
+    - "tests/unit/align-*.test.ts"
+    - "package.json"
+    - "docs/DEVELOPMENT.md"
+steps:
+  - src/align/dtw.ts - banded DTW between the take's 10 ms frames and the reference on the same grid, octave-folded pitch cost, silence-aware
+  - src/align/score.ts - per note median deviation in cents (octave folded), early or late against the singer's own median offset, held too short, missed; per bar score 0 to 100 and a flag
+  - scripts/score-take.ts and an npm script "align" - reference.json plus phase 2 pitch JSON in, scores out
+  - tests/unit/align-score.test.ts - generated takes, the choir-part-accuracy exit check (30 cents flat in bar 4 flags bar 4 only), plus perfect, late, stretched, octave-off and too-short takes
+success_criteria:
+  - "Vitest exit check - the 30 cents flat in bar 4 take flags bar 4 and nothing else"
+  - "Timing slips and an octave off are not flagged; a short note and a missed note are"
+  - "npm run typecheck, test:unit, test:songs pass"
+risk: medium
+rollback: Revert the PR. Nothing else depends on src/align yet
