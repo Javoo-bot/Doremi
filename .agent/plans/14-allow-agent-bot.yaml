@@ -9,8 +9,10 @@ inputs:
 scope:
   paths:
     - ".github/workflows/agent.yml"
+    - ".github/workflows/pr-checks.yml"
 steps:
   - Add allowed_bots set to the App's slug only (repo variable AGENT_APP_SLUG), never '*'
+  - Install ffmpeg without the runner's Microsoft apt mirror, which returned 403 and failed audio-quality on this PR
 success_criteria:
   - After merge, re-labelling issue 7 starts a run that gets past the actor check
 risk: high
