@@ -1,0 +1,29 @@
+intent: Parse the bass staff of a choir score (MusicXML, .mscx, .mscz) into reference notes and write reference.json
+why: Issue #6, phase 1 of docs/DEVELOPMENT.md. Later phases compare the take against these notes
+issue: 6
+inputs:
+  score_pdf: none
+  take: none
+  part: bass
+  reference_source: score
+scope:
+  paths:
+    - ".agent/plans/6-reference-notes.yaml"
+    - "src/score/*"
+    - "scripts/score-to-reference.ts"
+    - "tests/unit/score-*.test.ts"
+    - "tests/fixtures/scores/*"
+    - "package.json"
+steps:
+  - Tiny XML reader and zip reader with no new dependencies (node:zlib)
+  - MusicXML reader giving notes with pitch, beats, seconds, length, bar, syllable
+  - MuseScore 3/4 reader giving the same shape
+  - Bass staff picker by label (Bajo, Baix, Baixos, B, B., Bass), with the 3-staff case
+  - CLI that writes songs/<song>/reference.json
+  - Fixtures written as MusicXML in tests/fixtures/scores, tests for both
+success_criteria:
+  - "npm run test:unit returns exactly the bass notes of the SATB and 3-staff fixtures, with bars and syllables"
+  - "npm run test:songs accepts a written reference.json"
+  - "npm run typecheck passes"
+risk: medium
+rollback: Revert the PR. Nothing else depends on src/score yet
