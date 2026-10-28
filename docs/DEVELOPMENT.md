@@ -41,24 +41,17 @@ The agent pushes as the `doremi-code-agent` GitHub App. The App has no workflow 
 
 ### Phase 0. Unblock the pipeline
 
-PRs #1 and #2 can't merge because the `PR Checks` jobs call test scripts that don't exist yet.
-
-- Add the test runner (Vitest) and the npm scripts the checks call: `test:unit`, `test:songs`.
-- Add `scripts/audio-quality.sh` and a starter `tests/evals/promptfooconfig.yaml`.
-- Mark the Playwright job as skipped until there is a page to test.
-- Set up the GitHub App (auto-merge) and the Project board. **Needs the owner:** `gh auth refresh -s project`.
-
-**Exit check:** PR #1 goes green and merges on its own.
+Done 2026-10-28 (PR #4). The checks run real work, `main` has a ruleset with 7 required checks and no bypass, and auto-merge is on. The eval and Playwright checks skip with a notice until phases 4 and 5.
 
 ### Phase 1. Reference notes from the score
 
 Turn the bass staff into a list of notes: pitch, start beat, length, bar number and lyric syllable.
 
-- Read MuseScore files directly (`.mscz` is zipped XML). Covers *Què volen* and *La Barraqueta*.
-- Read the PDFs with Audiveris (open-source score reading) to MusicXML, then pick the staff labelled Bajo / Baix / B. Starts with *Gallo rojo*.
-- Store each song's reference as `reference.json` on the owner's laptop only.
+- Read MuseScore files directly (`.mscz` is zipped XML) and MusicXML.
+- Pick the staff labelled Bajo / Baix / B, normally the 4th. Three-staff scores (*La Barraqueta*, *Ay Carmela*) put tenors and basses on the 3rd staff, in bass clef.
+- The agent builds and tests this on small SATB fixtures it writes itself. The choir's own songs are read on the owner's laptop and never committed.
 
-**Exit check:** for *Gallo rojo*, the notes read from the PDF match the bass-only mix `gallo_B_2.3.mp3` (Phase 2's tracker on that mix lands on the same notes in at least 95% of beats).
+**Exit check:** the parser returns exactly the bass notes of the fixtures. On the owner's laptop, *Gallo rojo* read from its PDF matches the bass-only mix `gallo_B_2.3.mp3` in at least 95% of beats.
 
 ### Phase 2. Pitch tracking
 
@@ -105,17 +98,14 @@ The screen you use after singing.
 ### Phase 6. Deploy
 
 - Page and API on Cloudflare Workers. Sessions, scores and the weekly cost counter go in a Durable Object.
-- **Decision needed:** CREPE is Python, and Workers can't run it. Two options:
-  - **Run the pitch tracker in the browser** (a small CREPE model, about 2 MB). Your audio never leaves your device, and there's no server cost. **Recommended.**
-  - **Run a small Python service elsewhere.** More to run and pay for.
-- Recordings stay private. The €50 a week hard stop lives in the Worker.
+- Pitch tracking runs on a small Python server with full CREPE, so the phone runs no model (owner decision, 2026-10-28). Workers can't run Python, so the Worker sends the take to this server. The host is still to pick.
+- Recordings stay private. The €50 a week hard stop lives in the Worker and covers the server's cost too.
 
 **Exit check:** you sing *Gallo rojo* from your phone and get the graph and tips in under 5 seconds.
 
 ### Phase 7. All the songs
 
-- Ask the director for the MuseScore or MusicXML sources. That covers 9 more songs with no score reading.
-- Audiveris for the rest. Scans (L'Internacional, Soldado) need a check by eye.
+- No MuseScore sources exist beyond *Què volen* and *La Barraqueta*, so Audiveris (open-source score reading) reads every other PDF to MusicXML. Scans (L'Internacional, Soldado) need a check by eye.
 - Songs with no score (Rosa de paper, Ya Tale3in): convert the bass practice track to notes as a last resort, marked as lower confidence.
 - Each new song adds its fixture to the `song-regression` check, so adding songs can't break old ones.
 
@@ -129,6 +119,6 @@ The repo is public. The choir's recordings, scores, arrangements and the note da
 
 | Question | Who | Blocks |
 |---|---|---|
-| Will the director share the MuseScore / MusicXML files? | Owner asks the director | Phase 7 (faster) |
-| Pitch tracker in the browser or on a server? | Owner, recommendation: browser | Phase 6 |
-| Ay Carmela: are the staff labels the usual order? | Owner checks by eye | Phase 7 |
+| Which host runs the Python CREPE server? | Owner | Phase 6 |
+
+Answered on 2026-10-28: pitch tracking runs on a server, not in the browser. The director has no more MuseScore sources. *Ay Carmela* has no staff labels; it's 3 staves and the bass line is the bass-clef 3rd staff, shared with the tenors.
