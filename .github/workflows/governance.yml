@@ -56,6 +56,9 @@ jobs:
 
   automerge:
     needs: [plan-gate, risk-tier]
+    permissions:
+      contents: write
+      pull-requests: write
     if: >-
       github.event_name == 'pull_request' &&
       startsWith(github.head_ref, 'agent/') &&
@@ -66,10 +69,12 @@ jobs:
       # An App token, not GITHUB_TOKEN: merges made with GITHUB_TOKEN do not trigger the deploy workflow.
       - uses: actions/create-github-app-token@v1
         id: app
+        if: vars.AGENT_APP_ID != ''
         with:
           app-id: ${{ vars.AGENT_APP_ID }}
           private-key: ${{ secrets.AGENT_APP_PRIVATE_KEY }}
+      # Without the App, GITHUB_TOKEN merges still work but do not start the deploy workflow.
       - name: Enable auto-merge (waits for all required checks)
         env:
-          GH_TOKEN: ${{ steps.app.outputs.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
         run: gh pr merge "${{ github.event.pull_request.number }}" --auto --merge --repo "${{ github.repository }}"
