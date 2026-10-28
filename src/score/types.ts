@@ -36,6 +36,24 @@ export interface ReferenceNote {
 
 export interface Reference {
   title: string;
-  part: 'bass';
+  part: 'bass' | 'greu';
   notes: ReferenceNote[];
+}
+
+export interface AudioReferenceNote {
+  midi: number;
+  startSec: number;
+  lengthSec: number;
+  /** 0 to 1: how steady and how clearly voiced the tracker found this note. */
+  confidence: number;
+  lyric?: string;
+}
+
+/** A reference made from a voice's practice track, so it has seconds but no beats or bars. */
+export interface AudioReference {
+  title: string;
+  part: string;
+  source: 'audio';
+  lyrics?: 'approximate';
+  notes: AudioReferenceNote[];
 }

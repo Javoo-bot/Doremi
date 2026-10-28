@@ -14,17 +14,41 @@ const norm = (s: string) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCas
 const BASS_WORD = /\b(bajos?|baix(?:os)?|bass(?:es)?)\b/;
 const BASS_LETTER = /^b\.?$/;
 
+const GREU_WORD = /\bgreu\b/;
+const GREU_SHORT = /^gr\.?$/;
+const AGUDA_WORD = /\bagud[ao]\b/;
+const AGUDA_SHORT = /^ag\.?$/;
+const PRINCIPAL_WORD = /\bprincipal\b/;
+const PRINCIPAL_SHORT = /^(princ\.?|v\.? ?p\.?)$/;
+
+export type StrikeVoice = 'aguda' | 'principal' | 'greu';
+
+/** The strike arrangement voice a staff label names: Veu Aguda / Ag., Veu Principal / Princ. / V.P., Veu Greu / Gr. */
+export function strikeVoice(label: string): StrikeVoice | undefined {
+  const l = norm(label);
+  if (GREU_WORD.test(l) || GREU_SHORT.test(l)) return 'greu';
+  if (AGUDA_WORD.test(l) || AGUDA_SHORT.test(l)) return 'aguda';
+  if (PRINCIPAL_WORD.test(l) || PRINCIPAL_SHORT.test(l)) return 'principal';
+  return undefined;
+}
+
+export const isGreuLabel = (label: string) => strikeVoice(label) === 'greu';
+
 export function isBassLabel(label: string): boolean {
   const l = norm(label);
   return BASS_LETTER.test(l) || BASS_WORD.test(l);
 }
 
-/** The staff labelled as bass. A label shared with the tenors ("Tenors i Baixos") counts, but a bass-only label wins. */
+/**
+ * The staff labelled as bass. A label shared with the tenors ("Tenors i Baixos") counts, but a bass-only label wins.
+ * A strike arrangement has no bass staff: the basses sing Veu Greu, so that staff is used when no Bajo/Baix exists.
+ */
 export function pickBassStaff(staves: Staff[]): Staff {
-  const found = staves.filter((s) => s.labels.some(isBassLabel));
+  let found = staves.filter((s) => s.labels.some(isBassLabel));
+  if (!found.length) found = staves.filter((s) => s.labels.some(isGreuLabel));
   if (!found.length) {
     const seen = staves.map((s) => `"${s.labels[0] ?? '?'}"`).join(', ');
-    throw new Error(`No staff is labelled as bass (Bajo, Baix, Baixos, B, B., Bass). Staves found: ${seen}`);
+    throw new Error(`No staff is labelled as bass or Greu (Bajo, Baix, Baixos, B, B., Bass, Veu Greu, Gr.). Staves found: ${seen}`);
   }
   const alone = found.filter((s) => !s.labels.some((l) => /\b(tenor|tenors|tenores)\b/.test(norm(l))));
   const pool = alone.length ? alone : found;
@@ -63,7 +87,8 @@ export function bassReference(score: Score, title?: string): Reference {
       if (n.lyric) out.lyric = n.lyric;
       return out;
     });
-  return { title: title ?? score.title ?? '', part: 'bass', notes };
+  const part = staff.labels.some(isBassLabel) ? 'bass' : 'greu';
+  return { title: title ?? score.title ?? '', part, notes };
 }
 
 export function parseScoreFile(bytes: Uint8Array, filename = ''): Score {

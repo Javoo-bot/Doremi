@@ -73,6 +73,8 @@ The general strike repertoire is *A la Vaga*, *Abril 74* and a three-voice *Gall
 
 **Exit check:** a track generated from a three-voice fixture's Greu line comes back as a reference matching at least 95% of the notes.
 
+Built in issue #15. `npm run reference:audio -- <track> --title <title> --part greu --out <dir> [--lyrics lyrics.docx]` writes `reference.json` with `source: "audio"`, and `notes` of MIDI pitch, `startSec`, `lengthSec` and `confidence`. These notes have no bars or beats. Phase 3 scoring on them needs bars, which a practice track doesn't give. The exit check passes on the generated fixture (18 of 18 notes).
+
 ### Phase 3. Alignment and scoring
 
 Line up your take with the score, then measure each note.

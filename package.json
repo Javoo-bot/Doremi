@@ -10,6 +10,7 @@
     "typecheck": "tsc",
     "test:unit": "vitest run",
     "score": "tsx scripts/score-to-reference.ts",
+    "reference:audio": "tsx scripts/reference-audio.ts",
     "align": "tsx scripts/score-take.ts",
     "test:songs": "node scripts/check-songs.mjs"
   },

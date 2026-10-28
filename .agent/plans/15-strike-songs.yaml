@@ -1,0 +1,32 @@
+intent: Read Aguda / Principal / Greu staves, and build a reference.json from a voice's practice track
+why: Issue #15, strike songs for 11 November. The basses sing Veu Greu, and Abril 74 and Gallo rojo have no score
+issue: 15
+inputs:
+  score_pdf: none
+  take: none
+  part: greu
+  reference_source: owner-supplied
+scope:
+  paths:
+    - ".agent/plans/15-strike-songs.yaml"
+    - "src/score/*"
+    - "src/reference/*"
+    - "scripts/reference-audio.ts"
+    - "tests/unit/strike-*.test.ts"
+    - "tests/fixtures/scores/*"
+    - "tests/fixtures/takes/*"
+    - "package.json"
+    - "docs/DEVELOPMENT.md"
+steps:
+  - Recognise Aguda/Ag., Principal/Princ./V.P., Greu/Gr. labels; pick Greu for the bass part when no Bajo/Baix staff exists
+  - Three-voice MusicXML fixture (Aguda, Princ., Greu) and a test that Greu is picked
+  - src/reference/audio.ts turns the phase 2 pitch frames into notes (80 ms stable, nearest semitone, merge repeats over short gaps, confidence per note)
+  - scripts/reference-audio.ts and npm run reference:audio call pitch/track.py and write reference.json with source "audio"
+  - Optional lyrics .docx attached in order, marked lyrics "approximate"
+  - Generated take from the fixture Greu line, and a test that the reference matches at least 95% of the notes
+success_criteria:
+  - "Greu staff picked in the three-voice fixture"
+  - "Exit check: generated Greu take comes back as a reference with at least 95% notes matched (pitch within a semitone, onset within 100 ms)"
+  - "npm run typecheck, test:unit, test:songs pass"
+risk: medium
+rollback: Revert the PR. Nothing else depends on the new files
