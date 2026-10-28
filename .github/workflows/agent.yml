@@ -1,0 +1,81 @@
+name: Coding Agent
+
+# One phase issue at a time. Starts when the owner or the agent App adds the agent:ready label.
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coding-agent
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: >-
+      github.event.label.name == 'agent:ready' &&
+      (github.actor == github.repository_owner || github.actor == format('{0}[bot]', vars.AGENT_APP_SLUG))
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    steps:
+      # The App token, not GITHUB_TOKEN, so the agent's pushes and PRs trigger the checks.
+      - uses: actions/create-github-app-token@v1
+        id: app
+        with:
+          app-id: ${{ vars.AGENT_APP_ID }}
+          private-key: ${{ secrets.AGENT_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app.outputs.token }}
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: npm ci && sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Git identity
+        run: |
+          git config user.name "${{ vars.AGENT_APP_SLUG }}[bot]"
+          git config user.email "${{ vars.AGENT_APP_SLUG }}[bot]@users.noreply.github.com"
+      - name: Build the prompt
+        id: prompt
+        env:
+          ISSUE: ${{ github.event.issue.number }}
+        run: |
+          {
+            echo "text<<PROMPT_EOF"
+            sed -e "s/{{ISSUE}}/$ISSUE/g" -e "s#{{REPO}}#${{ github.repository }}#g" .github/agent-prompt.md
+            echo "PROMPT_EOF"
+          } >> "$GITHUB_OUTPUT"
+      - uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_HOST: ${{ vars.LANGFUSE_HOST }}
+          LANGFUSE_TRACING_ENVIRONMENT: agent
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ steps.app.outputs.token }}
+          prompt: ${{ steps.prompt.outputs.text }}
+          claude_args: |
+            --model claude-sonnet-5-5
+            --max-turns 120
+            --allowedTools Read,Write,Edit,Glob,Grep,Bash,TodoWrite
+      - name: Escalate a failed run
+        if: failure()
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          ISSUE: ${{ github.event.issue.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create escalation --color B60205 --force -R "${{ github.repository }}" >/dev/null
+          gh issue edit "$ISSUE" -R "${{ github.repository }}" --add-label escalation --remove-label agent:ready
+          gh issue comment "$ISSUE" -R "${{ github.repository }}" --body "The agent run failed before finishing. Log: $RUN_URL. Re-add the agent:ready label to retry."
