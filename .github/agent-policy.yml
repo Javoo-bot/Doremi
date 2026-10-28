@@ -8,6 +8,11 @@ forbidden:
   - "recordings/*"
   - "config/budget.yaml"
 
+# MCP servers the owner may use from an interactive session, on top of .mcp.json.
+# App agents (CI, nightly) never load claude.ai connectors, so these never reach them.
+research_mcp:
+  - "claude_ai_Apify"
+
 # First match wins, checked high -> medium -> low. A path that matches nothing is high.
 tiers:
   high:
