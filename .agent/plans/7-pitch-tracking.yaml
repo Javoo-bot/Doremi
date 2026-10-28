@@ -1,0 +1,32 @@
+intent: Measure sung pitch about 100 times a second with CREPE, mark unvoiced frames, and generate test takes from a phase 1 reference
+why: Issue #7, phase 2 of docs/DEVELOPMENT.md. Phase 3 aligns this pitch curve with the score
+issue: 7
+inputs:
+  score_pdf: none
+  take: none
+  part: bass
+  reference_source: score
+scope:
+  paths:
+    - ".agent/plans/7-pitch-tracking.yaml"
+    - "pitch/*"
+    - "scripts/make-takes.ts"
+    - "tests/unit/pitch-*.test.ts"
+    - "tests/pitch/*"
+    - "tests/fixtures/takes/*"
+    - "tests/fixtures/scores/*"
+    - "package.json"
+    - "docs/DEVELOPMENT.md"
+steps:
+  - Python CLI pitch/track.py - ffmpeg decode to 16 kHz mono, torchcrepe at 10 ms hop, JSON out with time, Hz, cents-ready midi, confidence, voiced flag
+  - Unvoiced rule - low CREPE periodicity or low loudness marks the frame unvoiced (null pitch)
+  - Python module that synthesises harmonic takes from reference notes, with silent gaps between notes
+  - Generated takes (wav, mp3, m4a, ogg) from the SATB fixture bass reference into tests/fixtures/takes, passing scripts/audio-quality.sh
+  - pytest exit check - median error under 10 cents on voiced frames, gaps detected as unvoiced
+  - Vitest test that calls the CLI from Node, skipped with a notice when the Python deps are missing
+success_criteria:
+  - "pytest tests/pitch - median error under 10 cents, gaps unvoiced"
+  - "bash scripts/audio-quality.sh tests/fixtures/takes passes"
+  - "npm run typecheck, test:unit, test:songs pass"
+risk: medium
+rollback: Revert the PR. Nothing else depends on pitch/ yet
