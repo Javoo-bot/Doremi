@@ -1,0 +1,28 @@
+{
+  "name": "doremi",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "coach": "tsx scripts/coach.ts",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@langfuse/openai": "6.0.2",
+    "@langfuse/otel": "6.0.2",
+    "@langfuse/tracing": "6.0.2",
+    "@opentelemetry/exporter-trace-otlp-http": "0.223.0",
+    "@opentelemetry/otlp-exporter-base": "0.223.0",
+    "@opentelemetry/sdk-node": "0.223.0",
+    "dotenv": "18.0.9",
+    "openai": "7.45.1",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}
