@@ -1,0 +1,17 @@
+intent: Let the chained runs start - allow the doremi-code-agent App in claude-code-action
+why: Phase 2 failed in 1 minute - the action refuses bot actors unless listed in allowed_bots, and agent-chain labels the next phase as the App
+issue: 7
+inputs:
+  score_pdf: none
+  take: none
+  part: none
+  reference_source: none
+scope:
+  paths:
+    - ".github/workflows/agent.yml"
+steps:
+  - Add allowed_bots set to the App's slug only (repo variable AGENT_APP_SLUG), never '*'
+success_criteria:
+  - After merge, re-labelling issue 7 starts a run that gets past the actor check
+risk: high
+rollback: Revert the PR
