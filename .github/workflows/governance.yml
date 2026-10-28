@@ -21,10 +21,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # The PR head, not the merge commit: base.sha is stale once main moves, and the merge
+          # commit would pull other PRs' files into the diff.
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Validate plan, scope and forbidden paths
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
-        run: bash scripts/plan-gate.sh "${{ github.event.pull_request.base.sha }}"
+        run: bash scripts/plan-gate.sh "$(git merge-base "origin/${{ github.base_ref }}" HEAD)"
 
   risk-tier:
     if: github.event_name == 'pull_request'
@@ -39,9 +42,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # The PR head, not the merge commit: base.sha is stale once main moves, and the merge
+          # commit would pull other PRs' files into the diff.
+          ref: ${{ github.event.pull_request.head.sha }}
       - id: tier
         run: |
-          tier=$(bash scripts/risk-tier.sh '${{ github.event.pull_request.base.sha }}')
+          tier=$(bash scripts/risk-tier.sh "$(git merge-base "origin/${{ github.base_ref }}" HEAD)")
           echo "tier=$tier" >> "$GITHUB_OUTPUT"
           echo "merge=$(yq ".merge.$tier" .github/agent-policy.yml)" >> "$GITHUB_OUTPUT"
       - name: Label PR

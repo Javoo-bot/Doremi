@@ -10,9 +10,11 @@ scope:
   paths:
     - ".github/workflows/agent.yml"
     - ".github/workflows/pr-checks.yml"
+    - ".github/workflows/governance.yml"
 steps:
   - Add allowed_bots set to the App's slug only (repo variable AGENT_APP_SLUG), never '*'
   - Install ffmpeg without the runner's Microsoft apt mirror, which returned 403 and failed audio-quality on this PR
+  - plan-gate and risk-tier check out the PR head, so a stale base.sha after main moves no longer pulls merged PRs into the diff
 success_criteria:
   - After merge, re-labelling issue 7 starts a run that gets past the actor check
 risk: high
