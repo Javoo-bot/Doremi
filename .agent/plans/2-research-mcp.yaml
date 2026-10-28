@@ -1,0 +1,21 @@
+intent: Let the owner's interactive research use the Apify MCP server without giving it to app agents
+why: Owner asked to research X, Reddit and TLDR with Apify. The guard hook blocks any MCP server not in .mcp.json, which is the app agents' allowlist
+issue: 0
+inputs:
+  score_pdf: none
+  take: none
+  part: none
+  reference_source: none
+scope:
+  paths:
+    - ".github/agent-policy.yml"
+    - ".claude/hooks/guard.mjs"
+    - "docs/*"
+steps:
+  - Add research_mcp list to agent-policy.yml with claude_ai_Apify
+  - guard.mjs allows .mcp.json servers plus research_mcp, read from the policy file
+  - Nightly and CI agents never load claude.ai connectors, so the list only affects interactive sessions
+success_criteria:
+  - mcp__claude_ai_Apify__* passes the hook, an unknown server is still blocked
+risk: high
+rollback: Revert the PR; Apify is blocked again
