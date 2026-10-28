@@ -1,0 +1,31 @@
+intent: Turn the per-bar scores into two or three Catalan coaching tips that name only the bars that were sung badly
+why: Issue #9, phase 4 of docs/DEVELOPMENT.md. Phase 3 gives per-bar scores; the singer needs words, in bars and syllables
+issue: 9
+inputs:
+  score_pdf: none
+  take: none
+  part: bass
+  reference_source: score
+scope:
+  paths:
+    - ".agent/plans/9-coaching-catalan.yaml"
+    - "src/coaching/*"
+    - "scripts/coach-bars.ts"
+    - "scripts/build-evals.ts"
+    - "tests/helpers/*"
+    - "tests/unit/coaching-*.test.ts"
+    - "tests/evals/*"
+    - "package.json"
+    - "docs/DEVELOPMENT.md"
+steps:
+  - src/coaching/facts.ts - from a TakeScore and the reference, build the facts for flagged bars only (cents, early or late, too short, missed, syllables). No audio, no good bars
+  - src/coaching/tips.ts - prompt in Catalan terms (to, semito, compas), one call through src/llm.ts traced in Langfuse, a bar-reference checker, one retry, then a deterministic Catalan fallback. No flagged bar means no LLM call
+  - scripts/coach-bars.ts and npm script "coach:bars" - reference.json plus pitch.json in, tips out
+  - tests/helpers/synth-take.ts and scripts/build-evals.ts - 10 generated takes with known mistakes become tests/evals/cases.json
+  - tests/evals/promptfooconfig.yaml and check-tips.cjs - llm-evals runs the real model on the 10 cases and asserts every tip names a bad bar and no good bar is named
+  - tests/unit/coaching-*.test.ts - facts, checker, fallback and a stubbed LLM; cases.json stays in sync with the generator
+success_criteria:
+  - "Exit check - on 10 generated takes every tip names a flagged bar and none names a bar sung well (unit test with stub LLM, promptfoo with the real model)"
+  - "npm run typecheck, test:unit, test:songs pass"
+risk: medium
+rollback: Revert the PR. Nothing else depends on src/coaching yet
