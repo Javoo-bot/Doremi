@@ -1,0 +1,75 @@
+name: Governance
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: governance-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  plan-gate:
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'agent/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate plan, scope and forbidden paths
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: bash scripts/plan-gate.sh "${{ github.event.pull_request.base.sha }}"
+
+  risk-tier:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    outputs:
+      tier: ${{ steps.tier.outputs.tier }}
+      merge: ${{ steps.tier.outputs.merge }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: tier
+        run: |
+          tier=$(bash scripts/risk-tier.sh '${{ github.event.pull_request.base.sha }}')
+          echo "tier=$tier" >> "$GITHUB_OUTPUT"
+          echo "merge=$(yq ".merge.$tier" .github/agent-policy.yml)" >> "$GITHUB_OUTPUT"
+      - name: Label PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TIER: ${{ steps.tier.outputs.tier }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh label create "risk:$TIER" --force >/dev/null
+          gh pr edit "$PR" --remove-label risk:low,risk:medium,risk:high 2>/dev/null || true
+          gh pr edit "$PR" --add-label "risk:$TIER"
+
+  automerge:
+    needs: [plan-gate, risk-tier]
+    if: >-
+      github.event_name == 'pull_request' &&
+      startsWith(github.head_ref, 'agent/') &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      needs.risk-tier.outputs.merge == 'auto'
+    runs-on: ubuntu-latest
+    steps:
+      # An App token, not GITHUB_TOKEN: merges made with GITHUB_TOKEN do not trigger the deploy workflow.
+      - uses: actions/create-github-app-token@v1
+        id: app
+        with:
+          app-id: ${{ vars.AGENT_APP_ID }}
+          private-key: ${{ secrets.AGENT_APP_PRIVATE_KEY }}
+      - name: Enable auto-merge (waits for all required checks)
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: gh pr merge "${{ github.event.pull_request.number }}" --auto --merge --repo "${{ github.repository }}"

@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+# Enable once per clone: git config core.hooksPath .githooks
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks is not installed (https://github.com/gitleaks/gitleaks). Commit blocked." >&2
+  exit 1
+fi
+exec gitleaks git --pre-commit --staged --redact --verbose

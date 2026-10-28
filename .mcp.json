@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": { "Authorization": "Bearer ${GITHUB_MCP_TOKEN}" }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--isolated"]
+    },
+    "langfuse": {
+      "type": "http",
+      "url": "https://doremi-langfuse-mcp.OWNER.workers.dev/mcp",
+      "headers": { "Authorization": "Bearer ${LANGFUSE_MCP_TOKEN}" }
+    }
+  }
+}

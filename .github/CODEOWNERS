@@ -1,0 +1,11 @@
+# High-tier paths. For now the ruleset does NOT require code owner review,
+# so these PRs auto-merge and this file only notifies the owner.
+# To restrict High tier later, turn on "Require review from Code Owners" in the main ruleset
+# and set merge.high to owner-review in .github/agent-policy.yml.
+/.github/          @Javoo-bot
+/.claude/          @Javoo-bot
+/.mcp.json         @Javoo-bot
+/infra/            @Javoo-bot
+/wrangler.toml     @Javoo-bot
+/config/           @Javoo-bot
+/prompts/          @Javoo-bot

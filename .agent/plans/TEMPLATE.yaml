@@ -1,0 +1,16 @@
+# Copy to .agent/plans/<branch-name-without-agent/>.yaml.
+# This file is the first commit on every agent branch, alone, before any code.
+intent: ""            # What I will do, one sentence
+why: ""               # Why, linked to the issue or recording that triggered it
+issue: 0              # GitHub issue number
+inputs:
+  score_pdf: ""       # songs/<slug>/score.pdf, or "none"
+  take: ""            # recordings/<date>-<slug>.mp4 (read-only)
+  part: ""            # soprano | alto | tenor | bass
+  reference_source: score   # score | owner-supplied | none. "none" means low confidence
+scope:
+  paths: []           # Globs the diff may touch, e.g. "songs/ave-verum/*". plan-gate enforces this
+steps: []             # Ordered, concrete
+success_criteria: []  # Verifiable, each maps to a required check
+risk: low             # low | medium | high. risk-tier recomputes this from paths and wins
+rollback: ""          # How to undo: revert PR, redeploy previous SHA

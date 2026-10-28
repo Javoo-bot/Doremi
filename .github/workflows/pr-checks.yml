@@ -1,0 +1,96 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  EVIDENCE: evidence-${{ github.sha }}-${{ github.run_id }}
+
+jobs:
+  unit:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run test:unit
+
+  audio-quality:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y ffmpeg
+      - name: SNR, clipping, sample rate, silence ratio on fixtures
+        run: bash scripts/audio-quality.sh tests/fixtures/takes
+
+  llm-evals:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Transcription WER and coaching quality (promptfoo)
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+        run: npx promptfoo eval -c tests/evals/promptfooconfig.yaml -o reports/evals.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ env.EVIDENCE }}-evals
+          path: reports/evals.json
+          retention-days: 7
+
+  song-regression:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Every song has a reference part, every fixture scores as before
+        run: npm run test:songs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ env.EVIDENCE }}-songs
+          path: reports/songs/
+          retention-days: 7
+
+  ux-validator:
+    if: github.event_name == 'pull_request'
+    needs: [unit]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci && npx playwright install --with-deps chromium
+      - name: Upload a take, read the graph, click A/B, no console errors
+        env:
+          BASE_URL: ${{ vars.PREVIEW_URL_PREFIX }}-pr-${{ github.event.pull_request.number }}.workers.dev
+        run: npx playwright test tests/e2e --trace on
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ env.EVIDENCE }}-playwright
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

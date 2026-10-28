@@ -1,0 +1,36 @@
+{
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": ["github", "playwright", "langfuse"],
+  "permissions": {
+    "deny": [
+      "Edit(recordings/**)",
+      "Write(recordings/**)",
+      "Edit(config/budget.yaml)",
+      "Write(config/budget.yaml)",
+      "Bash(wrangler deploy:*)",
+      "Bash(npx wrangler deploy:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push origin main:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__.*",
+        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.mjs\" pre" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.mjs\" post" }]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": ".*",
+        "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.mjs\" error" }]
+      }
+    ]
+  }
+}

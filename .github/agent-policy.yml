@@ -1,0 +1,38 @@
+# Single source of truth for agent autonomy.
+# Read by scripts/plan-gate.sh, scripts/risk-tier.sh and .claude/hooks/guard.mjs.
+# Changing this file is High tier.
+version: 1
+
+# Agents may never change these. plan-gate fails the PR and the hook blocks the edit.
+forbidden:
+  - "recordings/*"
+  - "config/budget.yaml"
+
+# First match wins, checked high -> medium -> low. A path that matches nothing is high.
+tiers:
+  high:
+    - ".github/*"
+    - ".claude/*"
+    - ".mcp.json"
+    - "infra/*"
+    - "wrangler.toml"
+    - "config/llm.yaml"
+    - "prompts/*"
+  medium:
+    - "src/*"
+    - "songs/*"
+    - "tests/*"
+    - "package.json"
+    - "package-lock.json"
+  low:
+    - "docs/*"
+    - "reports/*"
+    - ".agent/plans/*"
+
+merge:
+  low: auto
+  medium: auto
+  high: auto          # Automated for now. Switch to owner-review if High-tier changes cause issues
+
+iteration:
+  max_failures_per_check: 2

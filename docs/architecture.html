@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doremi · agent architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F6F7F9;
+    --ink: #1A1D24;
+    --quiet: #5B6372;
+    --staff: #C5CBD5;
+    --target: #2F5D8A;
+    --sung: #6B3FA0;
+    --off: #D99A00;
+    --line: #E1E4EA;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14161B; --ink: #E8EAEE; --quiet: #9AA2B1; --staff: #39404C;
+      --target: #7FA8D6; --sung: #B58CE6; --off: #F0B429; --line: #262A32;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font: 400 17px/1.55 "Schibsted Grotesk", system-ui, sans-serif;
+  }
+  main { max-width: 1040px; margin: 0 auto; padding: 56px 24px 96px; }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.05; font-weight: 700; margin: 0 0 12px; letter-spacing: -0.02em; }
+  h2 { font-size: 1.25rem; font-weight: 700; margin: 64px 0 16px; }
+  p, li { max-width: 68ch; }
+  .lede { color: var(--quiet); margin: 0 0 40px; }
+  a { color: var(--target); }
+
+  .score { width: 100%; height: auto; display: block; overflow: visible; }
+  .score .staff line { stroke: var(--staff); stroke-width: 1; }
+  .score .target { fill: none; stroke: var(--target); stroke-width: 2; stroke-dasharray: 6 5; }
+  .score .sung { fill: none; stroke: var(--sung); stroke-width: 3; stroke-linecap: round; }
+  .score .sung-off { fill: none; stroke: var(--off); stroke-width: 3.5; stroke-linecap: round; }
+  .score .note { fill: var(--ink); transition: r .15s; }
+  .score .note.on { fill: var(--sung); }
+  .score .tag { fill: var(--off); font: 500 13px "Schibsted Grotesk", sans-serif; }
+  .legend { display: flex; gap: 6px 24px; max-width: none;color: var(--quiet); font-size: .9rem; margin: 8px 0 0; flex-wrap: wrap; }
+  .legend i { display: inline-block; width: 22px; height: 0; vertical-align: middle; margin-right: 8px; border-top: 3px solid var(--sung); }
+  .legend .t { border-top: 2px dashed var(--target); }
+  .legend .o { border-top-color: var(--off); }
+
+  .stages { display: grid; grid-template-columns: repeat(5, 1fr); margin-top: -4px; }
+  .stages button {
+    font: inherit; color: var(--quiet); background: none; border: 0; padding: 8px 4px; cursor: pointer;
+    text-align: center; border-radius: 6px;
+  }
+  .stages button[aria-pressed="true"] { color: var(--ink); font-weight: 700; }
+  .stages button:focus-visible { outline: 2px solid var(--target); outline-offset: 2px; }
+
+  .detail { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 20px; min-height: 180px; }
+  .detail h3 { margin: 0 0 4px; font-size: 1.1rem; }
+  .detail dl { display: grid; grid-template-columns: 120px 1fr; gap: 6px 20px; margin: 16px 0 0; }
+  .detail dt { color: var(--quiet); }
+  .detail dd { margin: 0; }
+
+  table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+  th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 500; color: var(--quiet); }
+  .tier { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 0; list-style: none; }
+  .flow li { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: .95rem; }
+
+  ol.priority li { margin-bottom: 8px; }
+  .files { columns: 2 260px; padding-left: 18px; }
+  code { font-size: .9em; }
+  footer { color: var(--quiet); margin-top: 72px; font-size: .9rem; }
+  @media (max-width: 640px) { .stages button { font-size: .8rem; } .detail dl { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Doremi</h1>
+  <p class="lede">How agents plan, build, check and ship a choir practice app. Each stage is a note. Pick one to see what goes in, what comes out, and what must pass before the next.</p>
+
+  <svg class="score" viewBox="0 0 1000 220" role="img" aria-label="Five stages drawn as notes on a staff. The sung line drifts off pitch at Validate, then returns.">
+    <g class="staff">
+      <line x1="0" x2="1000" y1="40" y2="40"/><line x1="0" x2="1000" y1="75" y2="75"/>
+      <line x1="0" x2="1000" y1="110" y2="110"/><line x1="0" x2="1000" y1="145" y2="145"/>
+      <line x1="0" x2="1000" y1="180" y2="180"/>
+    </g>
+    <path class="target" d="M0 145 H100 V110 H300 V75 H500 V57 H700 V40 H900 V75 H1000"/>
+    <path class="sung" d="M0 150 C40 152 70 146 100 145 C140 140 150 112 200 110 C250 108 270 104 300 108
+                          C330 112 350 78 400 76 C430 74 450 80 470 92"/>
+    <path class="sung-off" d="M470 92 C485 104 505 110 520 104"/>
+    <path class="sung" d="M520 104 C545 90 560 60 600 57 C650 54 680 50 700 44 C740 36 860 38 900 41 C940 46 960 72 1000 75"/>
+    <text class="tag" x="455" y="134">fails once: retry</text>
+    <circle class="note" data-i="0" cx="100" cy="145" r="11"/>
+    <circle class="note" data-i="1" cx="300" cy="110" r="11"/>
+    <circle class="note" data-i="2" cx="500" cy="75" r="11"/>
+    <circle class="note" data-i="3" cx="700" cy="57" r="11"/>
+    <circle class="note" data-i="4" cx="900" cy="40" r="11"/>
+  </svg>
+  <div class="stages" role="group" aria-label="Stages">
+    <button aria-pressed="true" data-i="0">Plan</button>
+    <button aria-pressed="false" data-i="1">Implement</button>
+    <button aria-pressed="false" data-i="2">Validate</button>
+    <button aria-pressed="false" data-i="3">Deploy</button>
+    <button aria-pressed="false" data-i="4">Operate</button>
+  </div>
+  <p class="legend"><span><i class="t"></i>What the plan says</span><span><i></i>What actually happens</span><span><i class="o"></i>Off pitch, caught by a check</span></p>
+
+  <section class="detail" aria-live="polite" id="detail"></section>
+
+  <h2>Who does what</h2>
+  <table>
+    <thead><tr><th>Agent</th><th>Job</th><th>Can use</th><th>Can never</th></tr></thead>
+    <tbody>
+      <tr><td>Planner</td><td>Turns an issue or a new recording into a plan file</td><td>Read the repo, GitHub, Langfuse</td><td>Edit anything</td></tr>
+      <tr><td>Executor</td><td>Does exactly the plan, on its own branch</td><td>Edit inside the plan's paths, run tests, push <code>agent/*</code></td><td>Touch recordings or budget, deploy, merge</td></tr>
+      <tr><td>Validator</td><td>Uses the app like you do and proves it works</td><td>Playwright, recordings (read)</td><td>Write to the repo</td></tr>
+      <tr><td>Nightly reviewer</td><td>Reads yesterday's failures while you sleep</td><td>Langfuse (read), one PR, three issues</td><td>Push directly, change the model</td></tr>
+    </tbody>
+  </table>
+
+  <h2>The pull request is the gate</h2>
+  <ol class="flow">
+    <li>Agent opens <code>agent/…</code> branch</li>
+    <li>First commit is the plan, alone</li>
+    <li>Code commits</li>
+    <li><code>plan-gate</code> + <code>risk-tier</code></li>
+    <li>Required checks</li>
+    <li>Auto-merge, or wait for you</li>
+  </ol>
+  <p>The plan commit lets anyone see what the agent meant to do before seeing what it did. A check that fails once sends the agent back to fix its branch. A second failure opens an issue on the Project board with what failed, what was tried, the evidence, and a suggested next step.</p>
+
+  <h2>How much the agent may do alone</h2>
+  <table>
+    <thead><tr><th>Tier</th><th>Examples</th><th>Merge</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tier" style="background:#4C9A6A"></span>Low</td><td>Docs, graphs, reports</td><td>Automatic after checks</td></tr>
+      <tr><td><span class="tier" style="background:#2F5D8A"></span>Medium</td><td>App code, dependencies, new songs</td><td>Automatic after checks</td></tr>
+      <tr><td><span class="tier" style="background:#D99A00"></span>High</td><td>Workflows, LLM model or prompts, infra, MCP config, hooks</td><td>Automatic after checks for now. You get notified. Tightens to your review if issues show up</td></tr>
+      <tr><td><span class="tier" style="background:#C2412D"></span>Critical</td><td>Production deploy, secrets</td><td>Agent prepares, you approve the environment</td></tr>
+      <tr><td><span class="tier" style="background:var(--ink)"></span>Forbidden</td><td><code>recordings/</code>, <code>config/budget.yaml</code></td><td>Never. The hook and <code>plan-gate</code> both block it</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Guardrails, most important first</h2>
+  <ol class="priority">
+    <li>Agents push only to <code>agent/*</code>. <code>main</code> needs a PR and green checks.</li>
+    <li><code>plan-gate</code> is a required check, so the forbidden paths are enforced by the system, not by instructions.</li>
+    <li>The Cloudflare token lives only in the <code>production</code> environment, which waits for your approval.</li>
+    <li>The Worker stops calling the LLM at €50 a week and warns at €35.</li>
+    <li>A hook blocks deploys, force-pushes, recursive deletes and any MCP server not on the allowlist before they run.</li>
+    <li>Every tool call, check and LLM call leaves a record tied to a run ID and a commit.</li>
+    <li>The repo is public, so nothing secret can merge. gitleaks scans every commit before you commit and again as a required check before merge. Fork PRs never see a secret, and your recordings never enter the repo.</li>
+  </ol>
+
+  <h2>Tools the agents can reach</h2>
+  <table>
+    <thead><tr><th>MCP server</th><th>Runs</th><th>For</th></tr></thead>
+    <tbody>
+      <tr><td>github</td><td>Remote</td><td>Issues, pull requests, reading code</td></tr>
+      <tr><td>playwright</td><td>Local</td><td>The validator clicking through the app</td></tr>
+      <tr><td>langfuse</td><td>Cloudflare Worker</td><td>Reading traces, latency and cost. Read-only</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Files</h2>
+  <ul class="files">
+    <li><a href="SDLC.md">SDLC.md</a></li>
+    <li><a href="../.github/agent-policy.yml">agent-policy.yml</a></li>
+    <li><a href="../.agent/plans/TEMPLATE.yaml">plan template</a></li>
+    <li><a href="../.github/pull_request_template.md">PR template</a></li>
+    <li><a href="../.github/CODEOWNERS">CODEOWNERS</a></li>
+    <li><a href="../.github/workflows/governance.yml">governance.yml</a></li>
+    <li><a href="../.github/workflows/pr-checks.yml">pr-checks.yml</a></li>
+    <li><a href="../.github/workflows/escalate.yml">escalate.yml</a></li>
+    <li><a href="../.github/workflows/deploy.yml">deploy.yml</a></li>
+    <li><a href="../.github/workflows/nightly-review.md">nightly-review.md</a></li>
+    <li><a href="../.mcp.json">.mcp.json</a></li>
+    <li><a href="../.claude/hooks/guard.mjs">guard.mjs</a></li>
+  </ul>
+
+  <footer>Design skills in <code>.claude/skills/</code>: frontend-design, impeccable, ui-ux-pro-max, design-system, ui-styling, emil-design-eng, review-animations, mobile-native, break-ui, web-design-guidelines, create-design-md.</footer>
+</main>
+<script>
+  const stages = [
+    { name: 'Plan', who: 'Planner agent, read-only',
+      input: 'Issue, sheet music PDF, MP4 of you singing, constraints (no backing track; choir part, not the melody)',
+      output: 'Plan file: what, why, which files, how to check it, how to undo it',
+      gate: 'plan-gate passes' },
+    { name: 'Implement', who: 'Executor agent, its own branch',
+      input: 'The plan',
+      output: 'Commits on agent/&lt;issue&gt;, PR with Plan and Evidence sections',
+      gate: 'Diff stays inside the plan’s paths' },
+    { name: 'Validate', who: 'CI and the validator agent',
+      input: 'The PR’s latest commit and its preview deploy',
+      output: 'Check results, Playwright trace, eval report, pitch graph screenshot',
+      gate: 'Audio quality, lyrics understood, reference part present, choir part accuracy, no song regressions, UX flow' },
+    { name: 'Deploy', who: 'Deploy workflow',
+      input: 'A merged commit SHA',
+      output: 'Cloudflare Worker running that exact SHA',
+      gate: 'You approve the production environment' },
+    { name: 'Operate', who: 'Nightly reviewer agent',
+      input: 'Langfuse traces, errors, latency, weekly cost',
+      output: 'At most one fix PR and three issues a night',
+      gate: 'Back to Plan, through the same gates' },
+  ];
+  const detail = document.getElementById('detail');
+  const buttons = [...document.querySelectorAll('.stages button')];
+  const notes = [...document.querySelectorAll('.note')];
+  function show(i) {
+    const s = stages[i];
+    detail.innerHTML = `<h3>${s.name}</h3><p>${s.who}</p>
+      <dl><dt>In</dt><dd>${s.input}</dd><dt>Out</dt><dd>${s.output}</dd><dt>Must pass</dt><dd>${s.gate}</dd></dl>`;
+    buttons.forEach((b, j) => b.setAttribute('aria-pressed', String(i === j)));
+    notes.forEach((n, j) => { n.classList.toggle('on', i === j); n.setAttribute('r', i === j ? 14 : 11); });
+  }
+  buttons.forEach((b) => b.addEventListener('click', () => show(+b.dataset.i)));
+  notes.forEach((n) => { n.style.cursor = 'pointer'; n.addEventListener('click', () => show(+n.dataset.i)); });
+  show(0);
+</script>
+</body>
+</html>

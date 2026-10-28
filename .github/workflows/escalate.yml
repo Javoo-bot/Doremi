@@ -1,0 +1,63 @@
+name: Escalate
+
+# Safe iteration policy: first failure, the agent fixes the branch.
+# Second failure of the same workflow on the same PR, a human gets an issue on the Project board.
+on:
+  workflow_run:
+    workflows: [Governance, PR Checks]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  escalate:
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'failure' &&
+      startsWith(github.event.workflow_run.head_branch, 'agent/') &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app
+        with:
+          app-id: ${{ vars.AGENT_APP_ID }}
+          private-key: ${{ secrets.AGENT_APP_PRIVATE_KEY }}
+      - name: Count failures and escalate on the second
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.event.workflow_run.name }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          PR: ${{ github.event.workflow_run.pull_requests[0].number }}
+        run: |
+          failures=$(gh run list -R "$REPO" --workflow "$WORKFLOW" --branch "$BRANCH" --status failure --json databaseId --jq length)
+          echo "failures=$failures"
+          [ "$failures" -ge 2 ] || exit 0
+
+          title="[escalation] $WORKFLOW failing on $BRANCH"
+          existing=$(gh issue list -R "$REPO" --label escalation --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+          [ -z "$existing" ] || { echo "Already escalated in #$existing"; exit 0; }
+
+          attempts=$(gh run list -R "$REPO" --workflow "$WORKFLOW" --branch "$BRANCH" --json conclusion,headSha,url \
+            --jq '.[] | "- \(.conclusion) on `\(.headSha[0:7])`: \(.url)"')
+
+          body=$(cat <<EOF
+          **What failed.** Workflow \`$WORKFLOW\` on PR #$PR, failed $failures times.
+
+          **What was attempted.**
+          $attempts
+
+          **Evidence.** Latest run: $RUN_URL (commit \`$SHA\`). Artifacts are attached to each run.
+
+          **Suggested next step.** Read the plan commit on the PR. If the plan is wrong, close the PR and re-plan. If the check is wrong, fix the check in a High-tier PR. Rollback: close the PR, nothing reached main.
+          EOF
+          )
+
+          gh label create escalation --color B60205 --force -R "$REPO" >/dev/null
+          url=$(gh issue create -R "$REPO" --title "$title" --label escalation --body "$body")
+          gh project item-add "${{ vars.PROJECT_NUMBER }}" --owner "${{ vars.PROJECT_OWNER }}" --url "$url"
