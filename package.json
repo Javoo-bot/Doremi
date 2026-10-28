@@ -9,6 +9,7 @@
     "coach": "tsx scripts/coach.ts",
     "typecheck": "tsc",
     "test:unit": "vitest run",
+    "score": "tsx scripts/score-to-reference.ts",
     "test:songs": "node scripts/check-songs.mjs"
   },
   "dependencies": {
