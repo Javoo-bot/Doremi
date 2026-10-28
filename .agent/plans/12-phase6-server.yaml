@@ -1,0 +1,20 @@
+intent: Bring docs/DEVELOPMENT.md in line with the owner's decisions of 2026-10-28
+why: Phase 6 still recommends the browser; the owner chose a Python CREPE server. No more director sources; Ay Carmela layout known; choir files stay private
+issue: 11
+inputs:
+  score_pdf: none
+  take: none
+  part: bass
+  reference_source: score
+scope:
+  paths:
+    - "docs/*"
+steps:
+  - Phase 6 - Python server with full CREPE, host to pick
+  - Phase 0 marked done; phase 1 says the agent builds on fixtures and choir songs run locally
+  - Phase 7 - no director sources, Audiveris reads every PDF
+  - Open questions - remove the answered ones
+success_criteria:
+  - The doc matches issue 11 and the owner's Obsidian plan
+risk: low
+rollback: Revert the PR
